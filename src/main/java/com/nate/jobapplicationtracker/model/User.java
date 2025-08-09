@@ -1,6 +1,7 @@
 package com.nate.jobapplicationtracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class User {
     private Long id;
     @NotBlank(message = "username is required")
     private String username;
+    @Email
     private String email;
     @NotBlank(message = "password is required")
     private String password;
