@@ -1,6 +1,8 @@
 package com.nate.jobapplicationtracker.service;
 
+import com.nate.jobapplicationtracker.dto.UserDto;
 import com.nate.jobapplicationtracker.exception.UserNotFoundException;
+import com.nate.jobapplicationtracker.mapper.UserMapper;
 import com.nate.jobapplicationtracker.model.User;
 import com.nate.jobapplicationtracker.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,23 +28,28 @@ public class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    PasswordEncoder encoder;
+
+    @Mock
+    User mockUser;
+
     private UserService service;
-    private User mockUser;
     @BeforeEach
     void startUp(){
-        service = new UserService(userRepository);
-        mockUser = mock(User.class);
+        service = new UserService(userRepository,encoder);
     }
 
 
     @Test
     void testSaveUser(){
-        when(userRepository.save(mockUser)).thenReturn(mockUser);
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        when(mockUser.getId()).thenReturn(2L);
 
-        User user = service.saveUser(mockUser);
+        UserDto user = service.saveUser(UserMapper.toDto(mockUser));
 
 
-        assertEquals(user,mockUser, "should be the same User");
+        assertEquals(2L,user.getId(), "should have an id of 2L");
 
         verify(userRepository, atLeast(1)).save(any(User.class));
 
@@ -50,11 +58,12 @@ public class UserServiceTest {
     @DisplayName("Test Find by Username")
     @Test
     void testFindByUsername(){
+        when(mockUser.getId()).thenReturn(2L);
         when(userRepository.findByUsername("tester")).thenReturn(Optional.of(mockUser));
 
-        User user = service.findByUsername("tester");
+        UserDto user = service.findByUsername("tester");
 
-        assertEquals(user, mockUser, "should be the same User");
+        assertEquals(2L, user.getId(), "should have an id of 2L");
     }
 
     @DisplayName("Test find by Username: fail, should throw an Exception")
@@ -70,10 +79,11 @@ public class UserServiceTest {
     @Test
     void testGetUserById(){
         when(userRepository.findById(3L)).thenReturn(Optional.of(mockUser));
+        when(mockUser.getId()).thenReturn(3L);
 
-        User user = service.getUserById(3L);
+        UserDto user = service.getUserById(3L);
 
-        assertEquals(user,mockUser,"should be the same user");
+        assertEquals(3L,user.getId(),"should have an id of 3L");
     }
 
     @DisplayName("Test get User by ID: Fail, should throw an Exception")
@@ -92,7 +102,7 @@ public class UserServiceTest {
         User user = mock(User.class);
         when(userRepository.findAll()).thenReturn(new ArrayList<>(List.of(user,mockUser)));
 
-        List<User> users = service.getAllUsers();
+        List<UserDto> users = service.getAllUsers();
 
         assertEquals(2, users.size(), "Should contain 2 Users");
     }
@@ -103,8 +113,11 @@ public class UserServiceTest {
 
         when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
-        List<User> users = service.getAllUsers();
+        List<UserDto> users = service.getAllUsers();
 
         assertEquals(0,users.size(),"Should be an empty list");
     }
+
+
+
 }

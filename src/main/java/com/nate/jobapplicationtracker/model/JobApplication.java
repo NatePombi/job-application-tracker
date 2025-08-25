@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class JobApplication {
@@ -24,7 +27,13 @@ public class JobApplication {
     @Enumerated(EnumType.STRING)
     @NotNull
     private Status status;
-    private String notes;
+    @ElementCollection
+    @CollectionTable(
+            name = "job_application_notes",
+            joinColumns = @JoinColumn(name = "id")
+    )
+    @Column(name = "notes")
+    private List<String> notes = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

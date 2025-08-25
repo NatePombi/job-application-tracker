@@ -1,14 +1,14 @@
 package com.nate.jobapplicationtracker.service;
 
-import com.nate.jobapplicationtracker.model.User;
+import com.nate.jobapplicationtracker.dto.UserDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
-    User saveUser(User user);
-    User findByUsername(String username);
-    User getUserById(Long id);
-    List<User> getAllUsers();
+    UserDto saveUser(UserDto user);
+    UserDto findByUsername(String username);
+    UserDto getUserById(Long id);
+    List<UserDto> getAllUsers();
+    UserDto registerUser(String username, String email, String rwPass);
 
 }

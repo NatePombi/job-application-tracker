@@ -20,6 +20,6 @@ public class UserDto {
     private Long id;
     private String username;
     private String email;
-    private Set<Role> role;
+    private Role role;
     private List<JobApplication> jobApplicationList;
 }

@@ -22,9 +22,9 @@ public class User {
     private String email;
     @NotBlank(message = "password is required")
     private String password;
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Role> role;
+    @Column(length = 50, nullable = false)
+    private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<JobApplication> jobApplicationList;
 
